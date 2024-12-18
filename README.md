@@ -19,3 +19,12 @@ Ep-5
   write a dummy auth middleware for /admin routes
   write a dummy auth middleware for all /user routes except /user/login
   error handling using app.use('/',(err,req,res,next)=>{})
+Ep-6
+  Get the Connection string which was created during S1 from compass or atlas
+  Install Mongoose 
+  Connect app to the database "Connection URL"/databaseName
+  call the connectdb before listening to the port
+  creating schema using mongoose, create a user schema 
+  create a POST /signup API to add data to database
+  push some documents using that API through postman
+  error handling using try catch
