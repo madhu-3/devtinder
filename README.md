@@ -13,3 +13,8 @@ Ep-5
   next()
   next() along with res.send and observe the errors 
   array of route handlers, app.use(rh1,[rh2,rh3],rh4)
+  what is middleware and why do we need it
+  how express handles the requests behind the scenes
+  Diff between app.use and app.all
+  write a dummy auth middleware for /admin routes
+  write a dummy auth middleware for all /user routes except /user/login

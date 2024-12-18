@@ -1,59 +1,44 @@
 const express = require("express");
 const app = express();
+const { adminAuth, userAuth } = require("./middlewares/auth");
+//Importance of middlewares
+// app.use(
+//   "/admin/getallusers",
+//   (req, res, next) => {
+//     const token = "xyzToken"; // ideally we get it from req.body.token
+//     const isAuthorized = token === "xyzTok";
+//     if (isAuthorized) {
+//       next();
+//     } else {
+//       res.status(401).send("unauthorized to access");
+//     }
+//   },
+//   (req, res) => {
+//     console.log("fetching users...");
+//     res.send("all user data sent");
+//   }
+// );
 
-app.use("/abc", (req, res) => {
-  console.log("Test No Res");
-  //Not sending any response, API will wait wait and eventually timeout
+//here we need to add the auth code for all the admin routes, so we can do below
+app.use("/admin", adminAuth);
+
+app.get("/admin/getallusers", (req, res) => {
+  res.send("sending all user data");
+});
+app.delete("/admin/delete", (req, res) => {
+  res.send("deleted data");
 });
 
-// We can add as many route handlers as we want, it will execute only the first route handler unless explictly called next()
-app.use(
-  "/user",
-  (req, res, next) => {
-    console.log("Route handler 1");
-    res.send("Route Hanlder -> 1");
-  },
-  (req, res, next) => {
-    console.log("Route handler 2");
-    res.send("Route Hanlder -> 2");
-  },
-  (req, res, next) => {
-    console.log("Route handler 3");
-    res.send("Route Hanlder -> 3");
-  }
-);
-
-// if we already sent the response and calling next and in the next route handler, the API will work but we will get error
-app.use(
-  "/test",
-  (req, res, next) => {
-    console.log("Route handler 1");
-    //res.send("Route Hanlder -> 1");
-    next();
-  },
-  (req, res, next) => {
-    console.log("Route handler 2");
-    res.send("Route Hanlder -> 2");
-    next();
-  },
-  (req, res, next) => {
-    console.log("Route handler 3");
-    //res.send("Route Hanlder -> 3");
-  }
-);
-// Array of route handlers
-const rhArray = [
-  (req, res, next) => {
-    console.log("Route handler 1");
-    res.send("Route Hanlder -> 1");
-    next();
-  },
-  (req, res, next) => {
-    console.log("Route handler 2");
-    res.send("Route Hanlder -> 2");
-  },
-];
-app.get("/arrayof", rhArray);
+//instead of using use for all routes, we can also pass the middleware in the request
+app.post("/user/login", (req, res) => {
+  res.send("user login process");
+});
+app.get("/user/profile", userAuth, (req, res) => {
+  res.send("sending user profile");
+});
+app.post("/user/profile", userAuth, (req, res) => {
+  res.send("updated user profile");
+});
 app.listen(3000, () => {
   console.log("Successfully running on port 3000");
 });
