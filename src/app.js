@@ -9,6 +9,9 @@ app.post("/signup", async (req, res) => {
   const userObj = req.body;
   const user = new User(userObj);
   try {
+    if (userObj.skills.length > 10) {
+      throw new Error("Max allowed skills are only 10");
+    }
     if (userObj) {
       await user.save();
       res.send("Saved Successfully");
@@ -76,9 +79,16 @@ app.patch("/user", async (req, res) => {
   const userId = req.body.userId;
   const updatedObj = req.body;
   try {
+    const ALLOWED_FIELDS = ["userId","photoUrl", "about", "skills"];
+    if (!Object.keys(updatedObj).every((i) => ALLOWED_FIELDS.includes(i))) {
+      throw new Error("Not allowed to update");
+    }
+    if (updatedObj.skills.length > 10) {
+      throw new Error("Max allowed skills are only 10");
+    }
     const updated = await User.findByIdAndUpdate(userId, updatedObj, {
       returnDocument: "after",
-      runValidators:true
+      runValidators: true,
     });
     res.status(201).send(updated);
   } catch (err) {
