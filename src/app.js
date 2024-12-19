@@ -16,7 +16,7 @@ app.post("/signup", async (req, res) => {
       throw new Error("Invalid User");
     }
   } catch (err) {
-    res.status(400).send("Failed to Save data" + err.message);
+    res.status(400).send("Failed to Save data " + err.message);
   }
 });
 
@@ -76,8 +76,11 @@ app.patch("/user", async (req, res) => {
   const userId = req.body.userId;
   const updatedObj = req.body;
   try {
-    const updated = await User.findByIdAndUpdate(userId, updatedObj,{returnDocument:"after"});
-    res.status(201).send(updated)
+    const updated = await User.findByIdAndUpdate(userId, updatedObj, {
+      returnDocument: "after",
+      runValidators:true
+    });
+    res.status(201).send(updated);
   } catch (err) {
     res.status(400).send("Bad Request " + err);
   }

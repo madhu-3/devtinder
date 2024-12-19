@@ -40,3 +40,10 @@ Ep-7
   API to update a user
   Explore the mongoose documentation for Model methods
   what are options in a Modal.findByIdAndUpdate
+Ep-8
+  Explore schema type options from documentation
+  add default,required, unique,min,max,minLength,maxLength,trim
+  create a custom validate function for gender
+  Improve the DB schema, put all appropriate validations on each field n schema
+  add timestamps to the user schema
+  n 
