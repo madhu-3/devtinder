@@ -48,3 +48,6 @@ Ep-8
   add timestamps to the user schema
   add API level validation on patch request & signup post API
   data sanitization - add API validation for each field
+  Install validator library
+  Explore Validator library functions and use validator fns for email, password and photo url 
+  ***ALWAYS VALIDATE the request body before posting to database***
