@@ -28,3 +28,15 @@ Ep-6
   create a POST /signup API to add data to database
   push some documents using that API through postman
   error handling using try catch
+Ep-7
+  Difference between JS Object and JSON
+  add express json middleware
+  make signup api dynamic
+  findOne-> what it will return if we have multiple docs match the doc
+  API- get user by email
+  API - feed API - GET /feed - get all users from database
+  create a delete user API
+  Difference between PATCH and PUT
+  API to update a user
+  Explore the mongoose documentation for Model methods
+  what are options in a Modal.findByIdAndUpdate
