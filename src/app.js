@@ -3,9 +3,12 @@ const ConnectDB = require("./config/database");
 const User = require("./modals/user");
 const { userSignupValidator } = require("./utils/validations");
 const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 const app = express();
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.post("/signup", async (req, res) => {
   try {
@@ -33,18 +36,40 @@ app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
     const userdata = await User.findOne({ email: email });
-    console.log(userdata)
     if (!userdata) {
       throw new Error("Invalid Credentials-Wrong email");
     }
     const isPasswordValid = await bcrypt.compare(password, userdata.password);
     if (isPasswordValid) {
+      const token = jwt.sign({ _id: userdata._id }, "DEVTINDER@123$");
+      res.cookie("token", token);
       res.send("Login success");
     } else {
       throw new Error("Invalid Credentials-Wrong password");
     }
   } catch (err) {
-    res.status(400).send("ERROR: "+err);
+    res.status(400).send("ERROR: " + err);
+  }
+});
+
+app.get("/profile", async (req, res) => {
+  try {
+    const { token } = req.cookies;
+    if (!token) {
+      throw new Error("Invalid Token");
+    }
+    const userTokenDetails = jwt.verify(token, "DEVTINDER@123$");
+    const { _id } = userTokenDetails;
+    if (!_id) {
+      throw new Error("Invalid Token");
+    }
+    const user = await User.findById(_id);
+    if (!user) {
+      throw new Error("User Not found");
+    }
+    res.send(user);
+  } catch (err) {
+    res.status(400).send("ERROR: " + err);
   }
 });
 

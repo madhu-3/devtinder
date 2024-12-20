@@ -55,3 +55,10 @@ Ep-9
   validate data in signup API- use helper file
   install bcrypt and generate password hash and store the password
   create login api and add validations
+Ep-10
+  Install cookie-parser
+  just send a dummy cookie to user
+  create /profile API and check if we are able to get cookie back
+  install jsonwebtoken
+  In login API, after email and password validation, create a JWT token and send to user
+  read the cookie in profile API and find the logged in user.
