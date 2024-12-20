@@ -1,25 +1,50 @@
 const express = require("express");
 const ConnectDB = require("./config/database");
 const User = require("./modals/user");
+const { userSignupValidator } = require("./utils/validations");
+const bcrypt = require("bcrypt");
 const app = express();
 
 app.use(express.json());
 
 app.post("/signup", async (req, res) => {
-  const userObj = req.body;
-  const user = new User(userObj);
   try {
-    if (userObj.skills.length > 10) {
+    userSignupValidator(req);
+    const { firstName, lastName, email: emailId, password, skills } = req.body;
+    const passHash = await bcrypt.hash(password, 10);
+    console.log(passHash);
+    const user = new User({
+      firstName,
+      lastName,
+      email: emailId,
+      password: passHash,
+    });
+    if (skills?.length > 10) {
       throw new Error("Max allowed skills are only 10");
     }
-    if (userObj) {
-      await user.save();
-      res.send("Saved Successfully");
-    } else {
-      throw new Error("Invalid User");
-    }
+    await user.save();
+    res.send("Saved Successfully");
   } catch (err) {
     res.status(400).send("Failed to Save data " + err.message);
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const userdata = await User.findOne({ email: email });
+    console.log(userdata)
+    if (!userdata) {
+      throw new Error("Invalid Credentials-Wrong email");
+    }
+    const isPasswordValid = await bcrypt.compare(password, userdata.password);
+    if (isPasswordValid) {
+      res.send("Login success");
+    } else {
+      throw new Error("Invalid Credentials-Wrong password");
+    }
+  } catch (err) {
+    res.status(400).send("ERROR: "+err);
   }
 });
 
@@ -79,7 +104,7 @@ app.patch("/user", async (req, res) => {
   const userId = req.body.userId;
   const updatedObj = req.body;
   try {
-    const ALLOWED_FIELDS = ["userId","photoUrl", "about", "skills"];
+    const ALLOWED_FIELDS = ["userId", "photoUrl", "about", "skills"];
     if (!Object.keys(updatedObj).every((i) => ALLOWED_FIELDS.includes(i))) {
       throw new Error("Not allowed to update");
     }

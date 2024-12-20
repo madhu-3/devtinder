@@ -51,3 +51,7 @@ Ep-8
   Install validator library
   Explore Validator library functions and use validator fns for email, password and photo url 
   ***ALWAYS VALIDATE the request body before posting to database***
+Ep-9
+  validate data in signup API- use helper file
+  install bcrypt and generate password hash and store the password
+  create login api and add validations
