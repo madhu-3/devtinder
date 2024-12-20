@@ -2,6 +2,7 @@ const express = require("express");
 const ConnectDB = require("./config/database");
 const User = require("./modals/user");
 const { userSignupValidator } = require("./utils/validations");
+const { userAuth } = require("./middlewares/auth");
 const bcrypt = require("bcrypt");
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
@@ -41,8 +42,12 @@ app.post("/login", async (req, res) => {
     }
     const isPasswordValid = await bcrypt.compare(password, userdata.password);
     if (isPasswordValid) {
-      const token = jwt.sign({ _id: userdata._id }, "DEVTINDER@123$");
-      res.cookie("token", token);
+      const token = jwt.sign({ _id: userdata._id }, "DEVTINDER@123$", {
+        expiresIn: 120,
+      });
+      res.cookie("token", token, {
+        expires: new Date(Date.now() + 1 * 60 * 1000),
+      });
       res.send("Login success");
     } else {
       throw new Error("Invalid Credentials-Wrong password");
@@ -52,98 +57,17 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/profile", async (req, res) => {
+app.get("/profile", userAuth, async (req, res) => {
   try {
-    const { token } = req.cookies;
-    if (!token) {
-      throw new Error("Invalid Token");
-    }
-    const userTokenDetails = jwt.verify(token, "DEVTINDER@123$");
-    const { _id } = userTokenDetails;
-    if (!_id) {
-      throw new Error("Invalid Token");
-    }
-    const user = await User.findById(_id);
-    if (!user) {
-      throw new Error("User Not found");
-    }
+    const user = req.user;
     res.send(user);
   } catch (err) {
     res.status(400).send("ERROR: " + err);
   }
 });
 
-app.get("/user", async (req, res) => {
-  const emailId = req.body.email;
-  try {
-    const userbyemailId = await User.find({ email: emailId });
-    res.send(userbyemailId);
-  } catch (err) {
-    res.status(400).send("Failed to fetch data" + err.message);
-  }
-});
-
-app.get("/userbyemail", async (req, res) => {
-  const emailId = req.query.email;
-  try {
-    const userbyemailId = await User.find({ email: emailId });
-    res.send(userbyemailId);
-  } catch (err) {
-    res.status(400).send("Failed to fetch data" + err.message);
-  }
-});
-
-app.get("/feed", async (req, res) => {
-  try {
-    const allUsers = await User.find({});
-    res.send(allUsers);
-  } catch (err) {
-    res.status(400).send("Bad Request " + err);
-  }
-});
-app.delete("/user", async (req, res) => {
-  const userId = req.body.userId;
-  try {
-    const deletedAck = await User.findByIdAndDelete(userId);
-    res.send(`Successfully deleted ${userId}`);
-  } catch (err) {
-    res.status(400).send("Bad Request " + err);
-  }
-});
-
-app.delete("/user/:email", async (req, res) => {
-  const emailId = req.params.email;
-  try {
-    const deletedAck = await User.deleteMany({ email: emailId });
-    if (deletedAck.deletedCount > 0) {
-      res.send(`Successfully deleted ${emailId}`);
-    } else {
-      res.status(404).send(`${emailId} Not found`);
-    }
-  } catch (err) {
-    res.status(400).send("Bad Request " + err);
-  }
-});
-
-app.patch("/user", async (req, res) => {
-  const userId = req.body.userId;
-  const updatedObj = req.body;
-  try {
-    const ALLOWED_FIELDS = ["userId", "photoUrl", "about", "skills"];
-    if (!Object.keys(updatedObj).every((i) => ALLOWED_FIELDS.includes(i))) {
-      throw new Error("Not allowed to update");
-    }
-    if (updatedObj.skills.length > 10) {
-      throw new Error("Max allowed skills are only 10");
-    }
-    const updated = await User.findByIdAndUpdate(userId, updatedObj, {
-      returnDocument: "after",
-      runValidators: true,
-    });
-    res.status(201).send(updated);
-  } catch (err) {
-    res.status(400).send("Bad Request " + err);
-  }
+app.post("/connectionrequest", userAuth, async (req, res) => {
+  res.send(`Connection Request sent`);
 });
 
 ConnectDB()

@@ -1,24 +1,28 @@
-const adminAuth = (req, res, next) => {
-  const token = "xyzToken"; // ideally we get it from req.body.token
-  const isAuthorized = token === "xyzToken";
-  if (isAuthorized) {
-    next();
-  } else {
-    res.status(401).send("unauthorized to access");
-  }
-};
+const jwt = require("jsonwebtoken");
+const User = require("../modals/user");
 
-const userAuth = (req, res, next) => {
-  const token = "xyzToken"; // ideally we get it from req.body.token
-  const isAuthorized = token === "xyzToken";
-  if (isAuthorized) {
+const userAuth = async (req, res, next) => {
+  try {
+    const { token } = req.cookies;
+    if (!token) {
+      throw new Error("Invalid Token");
+    }
+    const decodedJWT = await jwt.verify(token, "DEVTINDER@123$");
+    const { _id } = decodedJWT;
+    if (!_id) {
+      throw new Error("Invalid Token");
+    }
+    const user = await User.findById(_id);
+    if (!user) {
+      throw new Error("Invalid Token");
+    }
+    req.user = user;
     next();
-  } else {
-    res.status(401).send("unauthorized to access");
+  } catch (err) {
+    res.status(400).send("ERROR: " + err);
   }
 };
 
 module.exports = {
-  adminAuth,
   userAuth,
 };
