@@ -40,11 +40,9 @@ app.post("/login", async (req, res) => {
     if (!userdata) {
       throw new Error("Invalid Credentials-Wrong email");
     }
-    const isPasswordValid = await bcrypt.compare(password, userdata.password);
+    const isPasswordValid = await userdata.validatePassword(password)
     if (isPasswordValid) {
-      const token = jwt.sign({ _id: userdata._id }, "DEVTINDER@123$", {
-        expiresIn: 120,
-      });
+      const token = await userdata.getJWT()
       res.cookie("token", token, {
         expires: new Date(Date.now() + 1 * 60 * 1000),
       });

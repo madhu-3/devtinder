@@ -65,3 +65,5 @@ Ep-10
   userAUth middleware
   add the userauth middleware in profile api and a new sendconnectionrequest api
   set the expiry of JWT token and the cookie to 7 days
+  create userschema method to get JWT
+  create userschema method to comparepassword
