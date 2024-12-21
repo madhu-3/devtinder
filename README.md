@@ -79,3 +79,12 @@ Ep-11
   create patch /profile/edit
   create patch /profile/password api-> forgot password
   make sure to validate all data in every post,patch apis
+Ep-12
+  Create Connection request schema
+  Send connection API
+  Proper validation of data and think about the corner cases
+  Learn Mongo Queries->https://www.mongodb.com/docs/manual/introduction/
+  schema.pre("save") function
+  Indexes in mongo and need of index in a DB
+  advantages & disadvantages of creating indexes
+  read about types of indexes- compound index(we used in this)
