@@ -67,3 +67,15 @@ Ep-10
   set the expiry of JWT token and the cookie to 7 days
   create userschema method to get JWT
   create userschema method to comparepassword
+Ep-11
+  Explore tinder APIs
+  create a list of all API you can think of for DEV tinder
+  Group multiple routes under respective routers
+  Read documentation for express.router
+  create routes folder for managing auth,profile,request routers
+  create authRouter,profileRouter,requestRouter
+  Import these routers in app.js
+  create post /logout api
+  create patch /profile/edit
+  create patch /profile/password api-> forgot password
+  make sure to validate all data in every post,patch apis
