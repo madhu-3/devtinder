@@ -88,3 +88,9 @@ Ep-12
   Indexes in mongo and need of index in a DB
   advantages & disadvantages of creating indexes
   read about types of indexes- compound index(we used in this)
+Ep-13
+  POST /request->accept or reject API
+  Thought process POST & GET
+  Read about ref and populate
+  create /user/requests/received with all checks
+  create /user/connections
