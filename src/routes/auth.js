@@ -7,13 +7,27 @@ const authRouter = express.Router();
 authRouter.post("/signup", async (req, res) => {
   try {
     userSignupValidator(req);
-    const { firstName, lastName, email: emailId, password, skills } = req.body;
+    const {
+      firstName,
+      lastName,
+      email: emailId,
+      password,
+      skills,
+      about,
+      age,
+      gender,
+      photoUrl,
+    } = req.body;
     const passHash = await bcrypt.hash(password, 10);
     const user = new User({
       firstName,
       lastName,
       email: emailId,
       password: passHash,
+      about: about,
+      age: age,
+      gender: gender,
+      photoUrl: photoUrl,
     });
     if (skills?.length > 10) {
       throw new Error("Max allowed skills are only 10");
@@ -35,9 +49,9 @@ authRouter.post("/login", async (req, res) => {
     if (isPasswordValid) {
       const token = await userdata.getJWT();
       res.cookie("token", token, {
-        expires: new Date(Date.now() + 1 * 60 * 1000),
+        expires: new Date(Date.now() + 10 * 60 * 60 * 1000),
       });
-      res.send("Login success");
+      res.send(userdata);
     } else {
       throw new Error("Invalid Credentials-Wrong password");
     }

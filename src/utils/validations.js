@@ -11,18 +11,28 @@ const userSignupValidator = (req) => {
 };
 
 const validatePatchUserProfileRequest = (req) => {
-  const ALLOWED_FIELDS=['photoUrl','about','skills']
-  const isEditAllowed=Object.keys(req.body).every(field=>ALLOWED_FIELDS.includes(field))
-  if(isEditAllowed){
-    if(req.body.skills?.length>10){
-      throw new Error("Skills should not be more than 10")
+  const ALLOWED_FIELDS = [
+    "firstName",
+    "lastName",
+    "age",
+    "gender",
+    "photoUrl",
+    "about",
+    "skills",
+  ];
+  const isEditAllowed = Object.keys(req.body).every((field) =>
+    ALLOWED_FIELDS.includes(field)
+  );
+  if (isEditAllowed) {
+    if (req.body.skills?.length > 10) {
+      throw new Error("Skills should not be more than 10");
     }
-    if(req.body?.photoUrl){
-      if(!validator.isURL(req.body.photoUrl)){
-        throw new Error("Not a valid photo URL")
+    if (req.body?.photoUrl) {
+      if (!validator.isURL(req.body.photoUrl)) {
+        throw new Error("Not a valid photo URL");
       }
     }
   }
-  return isEditAllowed
+  return isEditAllowed;
 };
-module.exports = { userSignupValidator,validatePatchUserProfileRequest };
+module.exports = { userSignupValidator, validatePatchUserProfileRequest };

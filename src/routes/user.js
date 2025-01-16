@@ -4,7 +4,7 @@ const ConnectionRequest = require("../modals/request");
 const User = require("../modals/user");
 
 const userRouter = express.Router();
-const USER_SAFE_DATA = "firstName lastName";
+const USER_SAFE_DATA = "firstName lastName age gender about photoUrl skills";
 
 userRouter.get("/user/requests/received", userAuth, async (req, res) => {
   try {
@@ -12,7 +12,7 @@ userRouter.get("/user/requests/received", userAuth, async (req, res) => {
     const userConnections = await ConnectionRequest.find({
       toUserId: loggedInUser._id,
       status: "interested",
-    }).populate("fromUserId", "firstName lastName");
+    }).populate("fromUserId", USER_SAFE_DATA);
     if (!userConnections) {
       return res.status(404).send("No Connection Requests Found");
     }
@@ -58,8 +58,8 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
 userRouter.get("/feed", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
-    const {page,limit}=req.query
-    let skip=(page-1)*limit
+    const { page, limit } = req.query;
+    let skip = (page - 1) * limit;
     const connections = await ConnectionRequest.find({
       $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
     }).select("fromUserId toUserId");
@@ -74,7 +74,10 @@ userRouter.get("/feed", userAuth, async (req, res) => {
         { _id: { $nin: Array.from(hideUsers) } },
         { _id: { $not: { $eq: loggedInUser._id } } },
       ],
-    }).select(USER_SAFE_DATA).skip(skip).limit(limit)
+    })
+      .select(USER_SAFE_DATA)
+      .skip(skip)
+      .limit(limit);
 
     res.send(userFeed);
   } catch (err) {
