@@ -44,21 +44,21 @@ app.post("/user/profile", userAuth, (req, res) => {
 
 // Error handling
 // we should write code using try, catch blocks but we can also handle using the wildcard route
-app.use('/',(err,req,res,next)=>{
-  if(err){
-    res.status(500).send('Something went wrong')
+app.use("/", (err, req, res, next) => {
+  if (err) {
+    res.status(500).send("Something went wrong");
   }
-})
+});
 app.get("/testerr", userAuth, (req, res, next) => {
   throw new Error("unexprected error");
   res.send("testing the error");
 });
-app.use('/',(err,req,res,next)=>{
-  if(err){
-    res.status(500).send('Something went wrong')
+app.use("/", (err, req, res, next) => {
+  if (err) {
+    res.status(500).send("Something went wrong");
   }
-})
+});
 
-app.listen(3000, () => {
-  console.log("Successfully running on port 3000");
+app.listen(7777, () => {
+  console.log("Successfully running on port 7777");
 });
