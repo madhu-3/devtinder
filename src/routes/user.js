@@ -48,7 +48,6 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
       }
       return item.fromUserId;
     });
-    console.log(data);
     res.send(data);
   } catch (err) {
     res.status(400).send("ERROR " + err);

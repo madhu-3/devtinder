@@ -16,7 +16,6 @@ const validatePatchUserProfileRequest = (req) => {
     "lastName",
     "age",
     "gender",
-    "photoUrl",
     "about",
     "skills",
   ];
@@ -26,11 +25,6 @@ const validatePatchUserProfileRequest = (req) => {
   if (isEditAllowed) {
     if (req.body.skills?.length > 10) {
       throw new Error("Skills should not be more than 10");
-    }
-    if (req.body?.photoUrl) {
-      if (!validator.isURL(req.body.photoUrl)) {
-        throw new Error("Not a valid photo URL");
-      }
     }
   }
   return isEditAllowed;

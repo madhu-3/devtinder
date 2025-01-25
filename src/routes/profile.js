@@ -18,11 +18,9 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
     const isReqValid = validatePatchUserProfileRequest(req);
     if (isReqValid) {
       const loggedInUser = req.user;
-      console.log("loggedInUser", loggedInUser);
       Object.keys(req.body).forEach(
         (item) => (loggedInUser[item] = req.body[item])
       );
-      console.log("loggedInUser", loggedInUser);
       await loggedInUser.save();
       res.send(loggedInUser);
     } else {

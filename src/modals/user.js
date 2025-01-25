@@ -58,13 +58,6 @@ const userSchema = new mongoose.Schema(
     },
     photoUrl: {
       type: String,
-      default:
-        "https://imebehavioralhealth.com/wp-content/uploads/2021/10/user-icon-placeholder-1.png",
-      validate(value) {
-        if (!validator.isURL(value)) {
-          throw new Error("Not good URL");
-        }
-      },
     },
     about: {
       type: String,
