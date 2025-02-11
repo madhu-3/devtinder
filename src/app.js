@@ -2,12 +2,13 @@ const express = require("express");
 const cors = require("cors");
 const ConnectDB = require("./config/database");
 const cookieParser = require("cookie-parser");
-const upload = require("./middlewares/multerConfig");
 const authRouter = require("./routes/auth");
 const profileRouter = require("./routes/profile");
 const requestRouter = require("./routes/request");
 const userRouter = require("./routes/user");
 const fileRouter = require("./routes/imageFile");
+const chatRouter = require("./routes/chat");
+const http = require("http");
 require("dotenv").config();
 const app = express();
 
@@ -20,11 +21,16 @@ app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", userRouter);
 app.use("/", fileRouter);
+app.use("/", chatRouter);
+const initializeSocket = require("./utils/socket");
+
+const server = http.createServer(app);
+initializeSocket(server);
 
 ConnectDB()
   .then(() => {
     console.log("Database Connection Successfull");
-    app.listen(process.env.PORT, () => {
+    server.listen(process.env.PORT, () => {
       console.log("Successfully running");
     });
   })
