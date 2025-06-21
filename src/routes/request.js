@@ -2,6 +2,7 @@ const express = require("express");
 const { userAuth } = require("../middlewares/auth");
 const ConnectionRequest = require("../modals/request");
 const User = require("../modals/user");
+const { sendSuccess, sendError } = require("../utils/commonUtils");
 
 const requestRouter = express.Router();
 
@@ -47,9 +48,9 @@ requestRouter.post(
         status: status,
       });
       await connetionRequest.save();
-      res.send("Connection Request sent Successful");
+      sendSuccess(res, {}, 200, "Connection Request sent Successful");
     } catch (err) {
-      res.status(400).send("ERROR " + err.message);
+      sendError(res, 400, "ERROR", err.message);
     }
   }
 );
@@ -78,13 +79,13 @@ requestRouter.post(
         toUserId: loggedInUser._id,
       });
       if (!connetionRequest) {
-        return res.status(404).send("Connection Request Not found");
+        return sendError(res, 404, "Connection Request Not found");
       }
       connetionRequest.status = status;
       const data = await connetionRequest.save();
-      res.send({ message: `Connection request ${status} Successfull!!`, data });
+      sendSuccess(res, data, 200, `Connection request ${status} Successfull!!`);
     } catch (err) {
-      res.status(400).send("ERROR: " + err);
+      sendError(res, 400, "Error", err);
     }
   }
 );

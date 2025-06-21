@@ -1,11 +1,12 @@
 const jwt = require("jsonwebtoken");
 const User = require("../modals/user");
+const { sendError } = require("../utils/commonUtils");
 
 const userAuth = async (req, res, next) => {
   try {
     const { token } = req.cookies;
     if (!token) {
-      return res.status(401).send("Unauthorized");
+      return sendError(res, 401, "Unauthorized");
     }
     const decodedJWT = await jwt.verify(token, process.env.JWT_SECRET);
     const { _id } = decodedJWT;
@@ -19,7 +20,7 @@ const userAuth = async (req, res, next) => {
     req.user = user;
     next();
   } catch (err) {
-    res.status(400).send("ERROR: " + err);
+    sendError(res, 400, "ERROR", err);
   }
 };
 

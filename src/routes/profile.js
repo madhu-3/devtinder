@@ -1,15 +1,16 @@
 const express = require("express");
 const { userAuth } = require("../middlewares/auth");
 const { validatePatchUserProfileRequest } = require("../utils/validations");
+const { sendSuccess, sendError } = require("../utils/commonUtils");
 
 const profileRouter = express.Router();
 
 profileRouter.get("/profile/view", userAuth, async (req, res) => {
   try {
     const user = req.user;
-    res.send(user);
+    sendSuccess(res, user, 200, "");
   } catch (err) {
-    res.status(400).send("ERROR: " + err);
+    sendError(res, 400, "ERROR", err);
   }
 });
 
@@ -22,12 +23,12 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
         (item) => (loggedInUser[item] = req.body[item])
       );
       await loggedInUser.save();
-      res.send(loggedInUser);
+      sendSuccess(res, loggedInUser, 200, "");
     } else {
       throw new Error("Invalid Request");
     }
   } catch (err) {
-    res.status(400).send("ERROR: " + err);
+    sendError(res, 400, "ERROR", err);
   }
 });
 

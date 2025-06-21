@@ -2,6 +2,7 @@ const express = require("express");
 const { userAuth } = require("../middlewares/auth");
 const ConnectionRequest = require("../modals/request");
 const User = require("../modals/user");
+const { sendError, sendSuccess } = require("../utils/commonUtils");
 
 const userRouter = express.Router();
 const USER_SAFE_DATA = "firstName lastName age gender about photoUrl skills";
@@ -14,11 +15,11 @@ userRouter.get("/user/requests/received", userAuth, async (req, res) => {
       status: "interested",
     }).populate("fromUserId", USER_SAFE_DATA);
     if (!userConnections) {
-      return res.status(404).send("No Connection Requests Found");
+      return sendError(res, 404, "No Connection Requests Found");
     }
-    res.send(userConnections);
+    sendSuccess(res, userConnections, 200, "");
   } catch (err) {
-    res.status(400).send("ERROR " + err);
+    sendError(res, 400, "ERROR", err);
   }
 });
 
@@ -39,7 +40,7 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
       .populate("fromUserId", USER_SAFE_DATA)
       .populate("toUserId", USER_SAFE_DATA);
     if (!userConnections) {
-      return res.status(404).send("No Connection Requests Found");
+      return sendError(res, 404, "No Connection Requests Found");
     }
 
     const data = userConnections.map((item) => {
@@ -48,9 +49,9 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
       }
       return item.fromUserId;
     });
-    res.send(data);
+    sendSuccess(res, data, 200, "");
   } catch (err) {
-    res.status(400).send("ERROR " + err);
+    sendError(res, 400, "Error", err);
   }
 });
 
@@ -78,9 +79,9 @@ userRouter.get("/feed", userAuth, async (req, res) => {
       .skip(skip)
       .limit(limit);
 
-    res.send(userFeed);
+    sendSuccess(res, userFeed, 200, "");
   } catch (err) {
-    res.status(400).send("ERROR: " + err);
+    sendError(res, 400, "Error", err);
   }
 });
 

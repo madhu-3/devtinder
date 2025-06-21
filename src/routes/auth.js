@@ -2,6 +2,7 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const { userSignupValidator } = require("../utils/validations");
 const User = require("../modals/user");
+const { sendSuccess, sendError } = require("../utils/commonUtils");
 const authRouter = express.Router();
 
 authRouter.post("/signup", async (req, res) => {
@@ -31,9 +32,9 @@ authRouter.post("/signup", async (req, res) => {
       throw new Error("Max allowed skills are only 10");
     }
     await user.save();
-    res.send("Saved Successfully");
+    sendSuccess(res, {}, 200, "Saved Successfully");
   } catch (err) {
-    res.status(400).send("Failed to Save data " + err.message);
+    sendError(res, 400, "Failed to Save data", err.message);
   }
 });
 authRouter.post("/login", async (req, res) => {
@@ -41,7 +42,7 @@ authRouter.post("/login", async (req, res) => {
     const { email, password } = req.body;
     const userdata = await User.findOne({ email: email });
     if (!userdata) {
-      throw new Error("Invalid Credentials-Wrong email");
+      throw new Error("Invalid Credentials");
     }
     const isPasswordValid = await userdata.validatePassword(password);
     if (isPasswordValid) {
@@ -49,17 +50,19 @@ authRouter.post("/login", async (req, res) => {
       res.cookie("token", token, {
         expires: new Date(Date.now() + 10 * 60 * 60 * 1000),
       });
-      res.send(userdata);
+      const userObj = userdata.toObject();
+      const { password, __v, ...result } = userObj;
+      sendSuccess(res, result, 200, "Logged In Successfully");
     } else {
-      throw new Error("Invalid Credentials-Wrong password");
+      throw new Error("Invalid Credentials");
     }
   } catch (err) {
-    res.status(400).send("ERROR: " + err);
+    sendError(res, 400, "", err);
   }
 });
 
 authRouter.post("/logout", async (req, res) => {
   res.cookie("token", null, { expires: new Date(Date.now()) });
-  res.send("Logout succesful");
+  sendSuccess(res, {}, 200, "Logout Successfull");
 });
 module.exports = authRouter;
